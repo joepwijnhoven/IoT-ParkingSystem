@@ -18,10 +18,10 @@ class TestResource(resource.CoAPResource):
         self.notify()
 
     def notify(self):
-        log.msg('TimeResource: trying to send notifications')
+        log.msg('TestResource: trying to send notifications')
         self.updatedState()
         reactor.callLater(60, self.notify)
 
     def render_GET(self, request):
-        response = coap.Message(code=coap.CONTENT, payload=datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+        response = coap.Message(code=coap.CONTENT, payload="This is a test message, please ignore")
         return defer.succeed(response)
