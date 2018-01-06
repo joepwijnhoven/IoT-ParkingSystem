@@ -67,6 +67,14 @@ class DatabaseManager():
         except Error as e:
             print(e)
 
+    def executeSQL(self, connection, sql):
+        try:
+            c = connection.cursor()
+            c.execute(sql)
+            return c.fetchall()
+        except Error as e:
+            return None;
+
     def testInsert(self, connection):
         try:
             parkeerplaats = (2, 'parkeerplaats 2')
