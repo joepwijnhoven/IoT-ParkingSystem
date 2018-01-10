@@ -5,7 +5,7 @@ from twisted.internet import defer
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.python import log
-from ApplicationLayer import TimeResource
+from ApplicationLayer import TimeResource, ReserveResource
 from ApplicationLayer import TestResource
 
 import txthings.resource as resource
@@ -35,7 +35,9 @@ class CoreResource(resource.CoAPResource):
         data = []
         self.root.generateResourceList(data, "")
         payload = ",".join(data)
+        print("payloadtest")
         print(payload)
+        print("payloadtestend")
         response = coap.Message(code=coap.CONTENT, payload=payload)
         response.opt.content_format = coap.media_types_rev['application/link-format']
         return defer.succeed(response)

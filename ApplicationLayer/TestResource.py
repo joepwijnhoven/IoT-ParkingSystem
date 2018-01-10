@@ -26,5 +26,6 @@ class TestResource(resource.CoAPResource):
     def render_GET(self, request):
         pprint(vars(request))
         print(repr(request.token))
+        print(request.payload.split(","))
         response = coap.Message(code=coap.CONTENT, payload="This is a test message, please ignore")
         return defer.succeed(response)
