@@ -5,11 +5,14 @@ from twisted.internet import defer
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.python import log
-from ApplicationLayer import TimeResource
-from ApplicationLayer import TestResource
+from ApplicationLayer.TimeResource import TimeResource
+from ApplicationLayer.TestResource import TestResource
 
 import txthings.resource as resource
 import txthings.coap as coap
+
+from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
+
 
 class CoreResource(resource.CoAPResource):
     """
@@ -49,11 +52,14 @@ root.putChild('.well-known', well_known)
 core = CoreResource(root)
 well_known.putChild('core', core)
 
-time = TimeResource.TimeResource()
+time = TimeResource()
 root.putChild('time', time)
 
-test = TestResource.TestResource()
+test = TestResource()
 root.putChild('test', test)
+
+parkingspotstate = ParkingspotStateResource()
+root.putChild('register', parkingspotstate)
 
 other = resource.CoAPResource()
 root.putChild('other', other)
