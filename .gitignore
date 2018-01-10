@@ -107,3 +107,4 @@ ENV/
 .idea/dictionaries
 .idea/IoT-ParkingSystem.iml
 .idea/misc.xml
+*.db
