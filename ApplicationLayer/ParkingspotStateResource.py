@@ -1,3 +1,4 @@
+import json
 import sys
 import datetime
 
@@ -10,27 +11,27 @@ from pprint import pprint
 import txthings.resource as resource
 import txthings.coap as coap
 
-class TestResource(resource.CoAPResource):
+from BusinessLayer.ParkinspotStateService import ParkingspotStateService
+
+
+class ParkingspotStateResource(resource.CoAPResource):
     def __init__(self):
+        self.psService = ParkingspotStateService()
         resource.CoAPResource.__init__(self)
         self.visible = True
         self.observable = True
+
         self.notify()
 
     def notify(self):
-        log.msg('TestResource: trying to send notifications')
+        log.msg('ParkingspotStateResource: trying to send state of parkingspot')
         self.updatedState()
         reactor.callLater(60, self.notify)
 
     def render_GET(self, request):
         pprint(vars(request))
-        print(repr(request.token))
-        print(request.payload.split(","))
-        response = coap.Message(code=coap.CONTENT, payload="This is a test message, please ignore")
-        return defer.succeed(response)
-
-    def render_PUT(self, request):
-        print('PUT payload: ' + request.payload)
-        payload = "Mr. and Mrs. Dursley of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much."
-        response = coap.Message(code=coap.CHANGED, payload=payload)
+        data = eval(request.payload)
+        state = self.psService.getParkingSpotState(data)
+        print state
+        response = coap.Message(code=coap.CONTENT, payload=str(state))
         return defer.succeed(response)

@@ -5,8 +5,9 @@ class DatabaseManager():
     database = "C:\\Users\\joep\\Documents\\IoT-ParkingSystem\\pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
-                                            id integer PRIMARY KEY,
-                                            name text NOT NULL
+                                            id text PRIMARY KEY,
+                                            billingrate REAL NOT NULL,
+                                            state text NOT NULL
                                         ); """
 
     sql_create_car_table = """ CREATE TABLE IF NOT EXISTS car (
@@ -26,15 +27,16 @@ class DatabaseManager():
                                             ); """
 
     def __init__(self):
-        connection = self.createConnection(self.database);
+        connection = self.createConnection();
         if connection is not None:
             self.createTables(connection)
         else:
             print("Error! cannot create the database connection.")
+        connection.close()
 
-    def createConnection(self, path):
+    def createConnection(self):
         try:
-            conn = sqlite3.connect(path)
+            conn = sqlite3.connect(self.database)
             return conn
         except Error as e:
             print(e)
@@ -55,7 +57,7 @@ class DatabaseManager():
             if tablename == "car":
                 sql = 'INSERT INTO car(id, licenceplate) VALUES(?,?) '
             elif tablename == "parkingspot":
-                sql = ' INSERT INTO parkingspot(id, name) VALUES(?,?) '
+                sql = ' INSERT INTO parkingspot(id, billingrate, state) VALUES(?,?,?) '
             elif tablename == "reservation":
                 sql = ' INSERT INTO reservation(id, car_id, parkingspot_id, date, begintime, endtime) VALUES(?,?,?,?,?,?) '
             else:
@@ -77,9 +79,9 @@ class DatabaseManager():
 
     def testInsert(self, connection):
         try:
-            parkeerplaats = (2, 'parkeerplaats 2')
-            sql1 = ''' INSERT INTO parkingspot(id, name)
-                          VALUES(?,?) '''
+            parkeerplaats = (1, 'parkeerplaats 2', 'RED')
+            sql1 = ''' INSERT INTO parkingspot(id, billingrate, state)
+                          VALUES(?,?,?) '''
             auto = (2, 'BBXAA')
             sql2 = ''' INSERT INTO car(id, licenceplate)
                                       VALUES(?,?) '''
@@ -102,8 +104,7 @@ class DatabaseManager():
         except Error as e:
             print(e)
 
-d = DatabaseManager()
-con = d.createConnection(d.database)
-d.testInsert(con)
-d.testSelect(con)
-con.close()
+
+##dm = DatabaseManager()
+##con = dm.createConnection()
+##print dm.executeSQL(con, "select * from parkingspot")
