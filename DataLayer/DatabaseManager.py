@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 
 class DatabaseManager():
-    database = "C:\\Users\\joep\\Documents\\IoT-ParkingSystem\\pythonsqlite.db"
+    database = "pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,
