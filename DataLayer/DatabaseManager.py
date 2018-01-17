@@ -2,8 +2,10 @@ import sqlite3
 from sqlite3 import Error
 from datetime import datetime, timedelta
 
+from ApplicationLayer.ConfigHandler import ConfigHandler
+
+
 class DatabaseManager():
-    database = "../DataLayer/pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,
@@ -26,6 +28,9 @@ class DatabaseManager():
                                             ); """
 
     def __init__(self):
+
+        configHandler = ConfigHandler()
+        self.database = configHandler.ConfigSectionMap("Database")['databasepath']
         connection = self.createConnection();
         if connection is not None:
             self.createTables(connection)
@@ -105,7 +110,7 @@ class DatabaseManager():
             print(e)
 
 
-db = DatabaseManager()
+#db = DatabaseManager()
 #con = dm.createConnection()
 #dm.testInsert(con)
 print db.executeSQL(db.createConnection(), "select *  from reservation")
