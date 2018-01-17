@@ -26,7 +26,7 @@ class ParkingspotStateResource(resource.CoAPResource):
     def notify(self):
         log.msg('ParkingspotStateResource: trying to send state of parkingspot')
         self.updatedState()
-        #reactor.callLater(60, self.notify)
+        reactor.callLater(60, self.notify)
 
     def render_GET(self, request):
         pprint(vars(request))

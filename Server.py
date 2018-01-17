@@ -66,8 +66,7 @@ def postFunction(postvars):
     print(date)
     print(duration)
 
-
-    client.requestResource()
+    reactor.callLater(1, client.putResource)
     # ps = ReservationService()
     # ps.makeReservation(parkingspot, licenseplate, date, duration)
 
@@ -133,16 +132,14 @@ root.putChild('register', parkingspotstate)
 other = resource.CoAPResource()
 root.putChild('other', other)
 
-endpoint = resource.Endpoint(root)
-
 def test1():
-    reactor.listenUDP(coap.COAP_PORT, coap.Coap(endpoint))
+    reactor.listenUDP(coap.COAP_PORT, protocol)
 
 def test2():
     httpd = SocketServer.TCPServer(("", 8085), MyHandler)
     httpd.serve_forever()
 
-#things for server_agent sending
+endpoint = resource.Endpoint(root)
 protocol = coap.Coap(endpoint)
 client = Agent(protocol)
 
