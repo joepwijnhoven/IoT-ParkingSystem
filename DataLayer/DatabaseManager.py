@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+from datetime import datetime, timedelta
 
 class DatabaseManager():
     database = "C:\\Users\\joep\\Documents\\IoT-ParkingSystem\\pythonsqlite.db"
@@ -7,7 +8,8 @@ class DatabaseManager():
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,
                                             billingrate REAL NOT NULL,
-                                            state text NOT NULL
+                                            state text NOT NULL,
+                                            IP text NOT NULL
                                         ); """
 
     sql_create_car_table = """ CREATE TABLE IF NOT EXISTS car (
@@ -19,9 +21,8 @@ class DatabaseManager():
                                                 id integer PRIMARY KEY,
                                                 car_id integer,
                                                 parkingspot_id integer,
-                                                date text,
-                                                begintime text,
-                                                endtime text,
+                                                begindate date,
+                                                enddate text,
                                                 FOREIGN KEY(car_id) REFERENCES car(id),
                                                 FOREIGN KEY(parkingspot_id) REFERENCES parkingspot(id)
                                             ); """
@@ -53,11 +54,12 @@ class DatabaseManager():
             print(e)
 
     def insertRecord(self, object, tablename, connection):
+        print object
         try:
             if tablename == "car":
                 sql = 'INSERT INTO car(id, licenceplate) VALUES(?,?) '
             elif tablename == "parkingspot":
-                sql = ' INSERT INTO parkingspot(id, billingrate, state) VALUES(?,?,?) '
+                sql = ' INSERT INTO parkingspot(id, billingrate, state, IP) VALUES(?,?,?,?) '
             elif tablename == "reservation":
                 sql = ' INSERT INTO reservation(id, car_id, parkingspot_id, date, begintime, endtime) VALUES(?,?,?,?,?,?) '
             else:
@@ -79,15 +81,15 @@ class DatabaseManager():
 
     def testInsert(self, connection):
         try:
-            parkeerplaats = (1, 'parkeerplaats 2', 'RED')
-            sql1 = ''' INSERT INTO parkingspot(id, billingrate, state)
-                          VALUES(?,?,?) '''
+            parkeerplaats = (2, 'parkeerplaats 2', 'free', '1020304')
+            sql1 = ''' INSERT INTO parkingspot(id, billingrate, state, IP)
+                          VALUES(?,?,?,?) '''
             auto = (2, 'BBXAA')
             sql2 = ''' INSERT INTO car(id, licenceplate)
                                       VALUES(?,?) '''
-            reservering = (2, 2, 2, '04-01-2018', '13:00', '14:00')
-            sql3 = ''' INSERT INTO reservation(id, car_id, parkingspot_id, date, begintime, endtime)
-                                                  VALUES(?,?,?,?,?,?) '''
+            reservering = (2, 2, 2, '2018-01-17 13:00:00', '2018-01-17 14:00:00')
+            sql3 = ''' INSERT INTO reservation(id, car_id, parkingspot_id, begindate, enddate)
+                                                  VALUES(?,?,?,?,?) '''
             cur = connection.cursor()
             cur.execute(sql1, parkeerplaats)
             cur.execute(sql2, auto)
@@ -105,6 +107,9 @@ class DatabaseManager():
             print(e)
 
 
-##dm = DatabaseManager()
-##con = dm.createConnection()
-##print dm.executeSQL(con, "select * from parkingspot")
+#db = DatabaseManager()
+#db.testInsert(db.createConnection())
+#con = dm.createConnection()
+#dm.testInsert(con)
+#print dm.executeSQL(con, "select * from parkingspot")
+
