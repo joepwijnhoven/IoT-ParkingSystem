@@ -43,6 +43,34 @@ class CoreResource(resource.CoAPResource):
         response.opt.content_format = coap.media_types_rev['application/link-format']
         return defer.succeed(response)
 
+
+class server_Agent():
+    def __init__(self, protocol):
+        self.protocol = protocol
+        reactor.callLater(1, self.requestResource)
+
+    def requestResource(self, ip, payload, uri):
+        request = coap.Message(code=coap.GET, payload=payload)
+        # Send request to "coap://coap.me:5683/test"
+        request.opt.uri_path = (uri,)
+        request.opt.observe = 0
+        request.remote = (ip, coap.COAP_PORT)
+        d = protocol.request(request, observeCallback=self.printLaterResponse)
+        d.addCallback(self.printResponse)
+        d.addErrback(self.noResponse)
+
+    def printResponse(self, response):
+        print 'First result: ' + response.payload
+        # reactor.stop()
+
+    def printLaterResponse(self, response):
+        print 'Observe result: ' + response.payload
+
+    def noResponse(self, failure):
+        print 'Failed to fetch resource:'
+        print failure
+        # reactor.stop()
+
 # Resource tree creation
 log.startLogging(sys.stdout)
 root = resource.CoAPResource()
@@ -65,5 +93,12 @@ other = resource.CoAPResource()
 root.putChild('other', other)
 
 endpoint = resource.Endpoint(root)
+
+
+#things for server_agent sending
+protocol = coap.Coap(endpoint)
+client = server_Agent(protocol)
+
+#start reactor
 reactor.listenUDP(coap.COAP_PORT, coap.Coap(endpoint)) #, interface="::")
 reactor.run()
