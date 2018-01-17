@@ -14,8 +14,11 @@ def Vehicle():
 
 def GETRequest():
     import httplib
+    name = raw_input("What parkingspot would you like to take? ")
+    date = raw_input("What date would you like to park (YY-MM-DD HH:MM")
+    params = urllib.urlencode({'parkingspot': name, 'starttime': date})
     conn = httplib.HTTPConnection("131.155.238.86", "8085")
-    conn.request("GET", "/ParkingSpotsAvailable")
+    conn.request("GET", "/ParkingSpotsAvailable?" + params)
     res = conn.getresponse()
     print res.status, res.reason
 
@@ -31,5 +34,5 @@ def POSTRequest(name, date, duration, licensePlate):
     conn.close()
 
 
-#GETRequest();
-Vehicle();
+GETRequest();
+#Vehicle();

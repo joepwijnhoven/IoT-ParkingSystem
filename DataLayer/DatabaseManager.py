@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 class DatabaseManager():
     #configHandler = ConfigHandler()
     #database = str(configHandler.pathvariable)
-    database = "C://Users//joep//Documents//IoT-ParkingSystem//DataLayer//pythonsqlite.db"
+    database = "C://Users//kszoo//OneDrive//Documenten//IoT-ParkingSystem//DataLayer//pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,
