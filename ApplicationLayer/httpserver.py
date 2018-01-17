@@ -8,9 +8,13 @@ from sys import version as python_version
 from cgi import parse_header, parse_multipart, parse_qs
 from pprint import pprint
 
+from txthings import resource, coap
+
+from ApplicationLayer.Server_Agent import Agent
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BusinessLayer.ParkinspotStateService import ParkingspotStateService
 from BusinessLayer.ReservationService import ReservationService
+from Server import client
 
 
 def getFunction():
@@ -26,8 +30,14 @@ def postFunction(postvars):
     print(date)
     print(duration)
 
-    ps = ReservationService()
-    ps.makeReservation(parkingspot, licenseplate, date, duration)
+    endpoint = resource.Endpoint(None)
+    protocol = coap.Coap(endpoint)
+    client = Agent(protocol)
+    #client.requestResource()
+    #ps = ReservationService()
+    #ps.makeReservation(parkingspot, licenseplate, date, duration)
+
+
 
     #print(parkingspots[0][0])
 
@@ -74,6 +84,6 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_response(200)
 
 
-
 httpd = SocketServer.TCPServer(("", 8085), MyHandler)
 httpd.serve_forever()
+

@@ -3,7 +3,7 @@ from BusinessLayer.ParkinspotStateService import ParkingspotStateService
 
 
 def Vehicle():
-    name = input("What parkingspot would you like to take? ")
+    name = raw_input("What parkingspot would you like to take? ")
     date = raw_input("What date would you like to park (YY-MM-DD HH:MM")
     duration = raw_input("How long would you like to park (minutes)")
     print("Making reservation for parkingspot " + str(name) + ", At date " + str(date) + "for " + str(duration) + " minutes!")
