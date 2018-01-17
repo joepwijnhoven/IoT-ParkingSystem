@@ -19,10 +19,13 @@ from txthings import resource, coap
 
 from ApplicationLayer.Server_Agent import Agent
 from BaseHTTPServer import BaseHTTPRequestHandler
+import BusinessLayer.ParkinspotStateService
 
 
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
 from BusinessLayer.ReservationService import ReservationService
+
+from urlparse import urlparse, parse_qs
 
 
 class CoreResource(resource.CoAPResource):
@@ -92,11 +95,21 @@ class MyHandler(BaseHTTPRequestHandler):
         return form
 
     def do_GET(self):
-        if self.path == '/ParkingSpotsAvailable':
-            # Insert your code here
-            getFunction()
+        reservation = ReservationService()
+        getFunction()
+        print self.path
 
-        self.send_response(200)
+        query_components = parse_qs(urlparse(self.path).query)
+        start = query_components["starttime"]
+        print start
+        duration = query_components["duration"]
+        print duration
+        print query_components
+        #print self.request
+        #qs = urlparse.parse_qs(urlparse.urlparse(self.request)[2])
+        parkingSpots = reservation.getFreeParkingSpots(start, duration)
+
+        self.send_response(200, message=query_components)
 
     def do_POST(self):
         postvars = self.parse_Post2()
