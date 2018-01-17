@@ -3,6 +3,7 @@ from sqlite3 import Error
 from datetime import datetime, timedelta
 
 
+
 class DatabaseManager():
     #configHandler = ConfigHandler()
     #database = str(configHandler.pathvariable)
@@ -109,8 +110,8 @@ class DatabaseManager():
             print(e)
 
 
-#db = DatabaseManager()
+db = DatabaseManager()
 #con = dm.createConnection()
 #dm.testInsert(con)
-#print db.executeSQL(db.createConnection(), "select *  from reservation")
+print db.executeSQL(db.createConnection(), "select *  from reservation")
 

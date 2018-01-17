@@ -7,8 +7,6 @@ from twisted.internet import defer
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.python import log
-from ApplicationLayer.TimeResource import TimeResource
-from ApplicationLayer.TestResource import TestResource
 
 import SocketServer
 import cgi
@@ -24,6 +22,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 
 
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
+from BusinessLayer.ReservationService import ReservationService
 
 
 class CoreResource(resource.CoAPResource):
@@ -63,18 +62,10 @@ def postFunction(postvars):
     duration = postvars["duration"].value
     parkingspot = postvars["parkingspot"].value
     licenseplate = postvars["licensePlate"].value
-    print(date)
-    print(duration)
-
-
-    client.requestResource()
-    # ps = ReservationService()
-    # ps.makeReservation(parkingspot, licenseplate, date, duration)
-
-
-    # print(parkingspots[0][0])
-
-    print "postFunction got called"
+    client.putResource("192.168.1.11", "reserved", ("32700", "32801",))
+    client.putResource("192.168.1.11", "orange", ("3341", "5527",))
+    ps = ReservationService()
+    ps.makeReservation(parkingspot, licenseplate, date, duration)
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -121,36 +112,26 @@ root.putChild('.well-known', well_known)
 core = CoreResource(root)
 well_known.putChild('core', core)
 
-time = TimeResource()
-root.putChild('time', time)
-
-test = TestResource()
-root.putChild('test', test)
-
 parkingspotstate = ParkingspotStateResource()
 root.putChild('register', parkingspotstate)
 
 other = resource.CoAPResource()
 root.putChild('other', other)
 
-endpoint = resource.Endpoint(root)
-
 def test1():
-    reactor.listenUDP(coap.COAP_PORT, coap.Coap(endpoint))
+    reactor.listenUDP(coap.COAP_PORT, protocol)
 
 def test2():
     httpd = SocketServer.TCPServer(("", 8085), MyHandler)
     httpd.serve_forever()
 
-#things for server_agent sending
+endpoint = resource.Endpoint(root)
 protocol = coap.Coap(endpoint)
 client = Agent(protocol)
 
 reactor.callInThread(test1)
 reactor.callInThread(test2)
 reactor.run()
-#start reactor
- #, interface="::")
 
 
 
