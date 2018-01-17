@@ -20,33 +20,13 @@ from txthings import resource, coap
 
 
 class Agent():
-    """
-    Example class which performs single GET request to coap.me
-    port 5683 (official IANA assigned CoAP port), URI "test".
-    Request is sent 1 second after initialization.
-
-    Remote IP address is hardcoded - no DNS lookup is preformed.
-
-    Method requestResource constructs the request message to
-    remote endpoint. Then it sends the message using protocol.request().
-    A deferred 'd' is returned from this operation.
-
-    Deferred 'd' is fired internally by protocol, when complete response is received.
-
-    Method printResponse is added as a callback to the deferred 'd'. This
-    method's main purpose is to act upon received response (here it's simple print).
-    """
 
     def __init__(self, protocol):
         self.protocol = protocol
-        #reactor.callLater(1, self.putResource)
 
-    def putResource(self):
-        ip = "131.155.186.213"
-        payload = "reserved"
-        uri = ('32700', '32801',)
+    def putResource(self, ip, payload, uri):
         request = coap.Message(code=coap.PUT, payload=payload)
-        request.opt.uri_path = ("32700", "32801",)
+        request.opt.uri_path = uri
         request.opt.content_format = coap.media_types_rev['text/plain']
         request.remote = (ip, 61616)
         d = self.protocol.request(request)
@@ -54,7 +34,6 @@ class Agent():
 
     def printResponse(self, response):
         print 'First result: ' + response.payload
-        # reactor.stop()
 
     def printLaterResponse(self, response):
         print 'Observe result: ' + response.payload
@@ -62,5 +41,4 @@ class Agent():
     def noResponse(self, failure):
         print 'Failed to fetch resource:'
         print failure
-        # reactor.stop()
 

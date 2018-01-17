@@ -20,7 +20,8 @@ class ParkingspotStateService():
         if len(parkingspot) == 0:
             self.db.insertRecord((str(object.get(32800)), object.get(32803), str(object.get(32801)), str(ip)), "parkingspot", con)
         elif updateIfExists:
-            self.db.executeSQL(con, "UPDATE parkingspot SET billingrate='" + str(object.get(32803)) + "', state='" + str(object.get(32801)) + "', IP='" + ip + "' WHERE id='" + str(object.get(32800)) + "'")
+            self.db.executeSQL(con, "UPDATE parkingspot SET billingrate='" + str(object.get(32803)) + "', state='" + str(object.get(32801)) + "', IP='" + str(ip) + "' WHERE id='" + str(object.get(32800)) + "'")
+            con.commit()
         con.close()
 
     def getParkingSpotById(self, id):

@@ -20,16 +20,14 @@ class ParkingspotStateResource(resource.CoAPResource):
         resource.CoAPResource.__init__(self)
         self.visible = True
         self.observable = True
-
         self.notify()
 
     def notify(self):
         log.msg('ParkingspotStateResource: trying to send state of parkingspot')
         self.updatedState()
-        reactor.callLater(60, self.notify)
+        #reactor.callLater(60, self.notify)
 
     def render_GET(self, request):
-        pprint(vars(request))
         data = eval(request.payload)
         if request.response_type is None:
             updateIfExists = True
@@ -37,13 +35,4 @@ class ParkingspotStateResource(resource.CoAPResource):
             updateIfExists = False
         state = self.psService.getParkingSpotState(data, request.remote[0], updateIfExists)
         response = coap.Message(code=coap.CONTENT, payload=str(state))
-        return defer.succeed(response)
-
-    def render_PUT(self, request):
-        parkingspot = self.psService.getParkingSpotById(request.payload)
-        if len(parkingspot) != 0:
-            for ob in self.observers:
-                print ob
-
-        response = coap.Message(code=coap.CHANGED)
         return defer.succeed(response)
