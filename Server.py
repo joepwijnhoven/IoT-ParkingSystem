@@ -2,18 +2,26 @@ import SocketServer
 import sys
 import datetime
 
+import thread
 from twisted.internet import defer
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 from twisted.python import log
-
-from ApplicationLayer.Server_Agent import Agent
 from ApplicationLayer.TimeResource import TimeResource
 from ApplicationLayer.TestResource import TestResource
 
-import txthings.resource as resource
-import txthings.coap as coap
-import socket
+import SocketServer
+import cgi
+import urlparse
+
+from cgi import parse_header, parse_multipart, parse_qs
+from pprint import pprint
+
+from txthings import resource, coap
+
+from ApplicationLayer.Server_Agent import Agent
+from BaseHTTPServer import BaseHTTPRequestHandler
+
 
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
 
@@ -47,6 +55,63 @@ class CoreResource(resource.CoAPResource):
         response.opt.content_format = coap.media_types_rev['application/link-format']
         return defer.succeed(response)
 
+def getFunction():
+    print "getFunction got called"
+
+def postFunction(postvars):
+    date = postvars["starttime"].value
+    duration = postvars["duration"].value
+    parkingspot = postvars["parkingspot"].value
+    licenseplate = postvars["licensePlate"].value
+    print(date)
+    print(duration)
+
+
+    client.requestResource()
+    # ps = ReservationService()
+    # ps.makeReservation(parkingspot, licenseplate, date, duration)
+
+
+    # print(parkingspots[0][0])
+
+    print "postFunction got called"
+
+class MyHandler(BaseHTTPRequestHandler):
+
+    def parse_POST(self):
+        ctype, pdict = parse_header(self.headers['content-type'])
+        if ctype == 'multipart/form-data':
+            postvars = parse_multipart(self.rfile, pdict)
+        elif ctype == 'application/x-www-form-urlencoded':
+            length = int(self.headers['content-length'])
+            postvars = urlparse.parse_qs(
+                self.rfile.read(length),
+                keep_blank_values=1)
+        else:
+            postvars = {}
+        return postvars
+
+    def parse_Post2(self):
+        form = cgi.FieldStorage(
+            fp=self.rfile,
+            headers=self.headers,
+            environ={'REQUEST_METHOD': 'POST',
+                     'CONTENT_TYPE': self.headers['Content-Type'],
+                     })
+        return form
+
+    def do_GET(self):
+        if self.path == '/ParkingSpotsAvailable':
+            # Insert your code here
+            getFunction()
+
+        self.send_response(200)
+
+    def do_POST(self):
+        postvars = self.parse_Post2()
+        postFunction(postvars);
+        self.send_response(200)
+
 # Resource tree creation
 log.startLogging(sys.stdout)
 root = resource.CoAPResource()
@@ -70,11 +135,22 @@ root.putChild('other', other)
 
 endpoint = resource.Endpoint(root)
 
+def test1():
+    reactor.listenUDP(coap.COAP_PORT, coap.Coap(endpoint))
+
+def test2():
+    httpd = SocketServer.TCPServer(("", 8085), MyHandler)
+    httpd.serve_forever()
 
 #things for server_agent sending
 protocol = coap.Coap(endpoint)
 client = Agent(protocol)
 
-#start reactor
-reactor.listenUDP(coap.COAP_PORT, coap.Coap(endpoint)) #, interface="::")
+reactor.callInThread(test1)
+reactor.callInThread(test2)
 reactor.run()
+#start reactor
+ #, interface="::")
+
+
+

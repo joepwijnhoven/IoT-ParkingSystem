@@ -2,13 +2,11 @@ import sqlite3
 from sqlite3 import Error
 from datetime import datetime, timedelta
 
-from ApplicationLayer.ConfigHandler import ConfigHandler
-
 
 class DatabaseManager():
-    configHandler = ConfigHandler()
+    #configHandler = ConfigHandler()
     #database = str(configHandler.pathvariable)
-    database = "C://Users//kszoo//OneDrive//Documenten//IoT-ParkingSystem//DataLayer//pythonsqlite.db"
+    database = "C://Users//joep//Documents//IoT-ParkingSystem//DataLayer//pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,

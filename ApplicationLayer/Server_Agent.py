@@ -39,7 +39,7 @@ class Agent():
 
     def __init__(self, protocol):
         self.protocol = protocol
-        reactor.callLater(1, self.requestResource)
+        #reactor.callLater(1, self.requestResource)
 
     def putResource(self):
         payload = "Riders on the storm.\nRiders on the storm.\nInto this house we're born\nInto this world we're thrown"
