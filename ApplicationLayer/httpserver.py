@@ -1,25 +1,43 @@
 
 
 import SocketServer
+import cgi
 import urlparse
+import json
 from sys import version as python_version
 from cgi import parse_header, parse_multipart, parse_qs
 from pprint import pprint
 
 from BaseHTTPServer import BaseHTTPRequestHandler
+from BusinessLayer.ParkinspotStateService import ParkingspotStateService
+
 
 def getFunction():
     print "getFunction got called"
 
 def postFunction(postvars):
 
-    print(postvars)
+    pprint(postvars)
+    print
+    date = postvars["starttime"].value
+    duration = postvars["duration"].value
+    print(date)
+    print(duration)
+
+    ps = ParkingspotStateService()
+    parkingspots = ps.getFreeParkingSpots(date, duration)
+
+    print(parkingspots[0][0])
+
     print "postFunction got called"
 
 
 
 
 class MyHandler(BaseHTTPRequestHandler):
+
+
+
     def parse_POST(self):
         ctype, pdict = parse_header(self.headers['content-type'])
         if ctype == 'multipart/form-data':
@@ -33,6 +51,15 @@ class MyHandler(BaseHTTPRequestHandler):
             postvars = {}
         return postvars
 
+    def parse_Post2(self):
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={'REQUEST_METHOD': 'POST',
+                         'CONTENT_TYPE': self.headers['Content-Type'],
+                         })
+            return form
+
     def do_GET(self):
         if self.path == '/ParkingSpotsAvailable':
             # Insert your code here
@@ -40,7 +67,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         self.send_response(200)
     def do_POST(self):
-        postvars = self.parse_POST()
+        postvars = self.parse_Post2()
         postFunction(postvars);
         self.send_response(200)
 

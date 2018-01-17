@@ -3,7 +3,7 @@ from sqlite3 import Error
 from datetime import datetime, timedelta
 
 class DatabaseManager():
-    database = "pythonsqlite.db"
+    database = "../DataLayer/pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,

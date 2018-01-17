@@ -1,13 +1,14 @@
 import httplib, urllib
-
+from BusinessLayer.ParkinspotStateService import ParkingspotStateService
 
 
 def Vehicle():
-    name = raw_input("What parkingspot would you like to take? ")
+    name = input("What parkingspot would you like to take? ")
     date = raw_input("What date would you like to park (YY-MM-DD HH:MM")
     duration = raw_input("How long would you like to park (minutes)")
     print("Making reservation for parkingspot " + str(name) + ", At date " + str(date) + "for " + str(duration) + " minutes!")
     licensePlate = raw_input("what is your cars license plate?")
+
     POSTRequest(name, date, duration, licensePlate)
 
 
@@ -20,7 +21,7 @@ def GETRequest():
 
 def POSTRequest(name, date, duration, licensePlate):
 
-    params = urllib.urlencode({'licensePlate': str(licensePlate), 'type': 'auto', 'parkingspot': str(name), 'duration': str(duration), 'starttime': str(date)})
+    params = urllib.urlencode({'licensePlate': str(licensePlate), 'type': 'auto', 'parkingspot': name, 'duration': str(duration), 'starttime': str(date)})
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     conn = httplib.HTTPConnection("131.155.238.86", "8085")
     conn.request("POST", "", params, headers)
@@ -29,6 +30,6 @@ def POSTRequest(name, date, duration, licensePlate):
     print response.status, response.reason
     conn.close()
 
-#POSTRequest();
 
+#GETRequest();
 Vehicle();
