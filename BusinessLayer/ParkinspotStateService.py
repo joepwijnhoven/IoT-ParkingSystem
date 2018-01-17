@@ -29,9 +29,9 @@ class ParkingspotStateService():
         con.close()
         return parkingspot
 
-    def getFreeParkingSpots(self, date, begintime, duration):
-        begin = datetime.strptime("2018-01-17 10:30", '%Y-%m-%d %H:%M')
-        end = begin + timedelta(minutes=20)
+    def getFreeParkingSpots(self, date, duration):
+        begin = datetime.strptime(date, '%Y-%m-%d %H:%M')
+        end = begin + timedelta(minutes=duration)
         con = self.db.createConnection()
 
         parkingspots = self.db.executeSQL(con,
@@ -39,3 +39,8 @@ class ParkingspotStateService():
                                         begin) + "' AND enddate >='" + str(end) + "')")
         con.close()
         return parkingspots
+
+
+
+
+

@@ -13,17 +13,15 @@ class DatabaseManager():
                                         ); """
 
     sql_create_car_table = """ CREATE TABLE IF NOT EXISTS car (
-                                                id integer PRIMARY KEY,
                                                 licenceplate text NOT NULL
                                             ); """
 
     sql_create_reservation_table = """ CREATE TABLE IF NOT EXISTS reservation (
-                                                id integer PRIMARY KEY,
                                                 car_id integer,
-                                                parkingspot_id integer,
+                                                parkingspot_id text,
                                                 begindate date,
                                                 enddate text,
-                                                FOREIGN KEY(car_id) REFERENCES car(id),
+                                                FOREIGN KEY(car_id) REFERENCES car(rowid),
                                                 FOREIGN KEY(parkingspot_id) REFERENCES parkingspot(id)
                                             ); """
 
@@ -57,11 +55,11 @@ class DatabaseManager():
         print object
         try:
             if tablename == "car":
-                sql = 'INSERT INTO car(id, licenceplate) VALUES(?,?) '
+                sql = 'INSERT INTO car(licenceplate) VALUES(?) '
             elif tablename == "parkingspot":
                 sql = ' INSERT INTO parkingspot(id, billingrate, state, IP) VALUES(?,?,?,?) '
             elif tablename == "reservation":
-                sql = ' INSERT INTO reservation(id, car_id, parkingspot_id, date, begintime, endtime) VALUES(?,?,?,?,?,?) '
+                sql = ' INSERT INTO reservation(car_id, parkingspot_id, begindate, enddate) VALUES(?,?,?,?) '
             else:
                 raise Exception("tablename not found")
 
@@ -84,12 +82,12 @@ class DatabaseManager():
             parkeerplaats = (2, 'parkeerplaats 2', 'free', '1020304')
             sql1 = ''' INSERT INTO parkingspot(id, billingrate, state, IP)
                           VALUES(?,?,?,?) '''
-            auto = (2, 'BBXAA')
-            sql2 = ''' INSERT INTO car(id, licenceplate)
-                                      VALUES(?,?) '''
-            reservering = (2, 2, 2, '2018-01-17 13:00:00', '2018-01-17 14:00:00')
-            sql3 = ''' INSERT INTO reservation(id, car_id, parkingspot_id, begindate, enddate)
-                                                  VALUES(?,?,?,?,?) '''
+            auto = ('BBXAA',)
+            sql2 = ''' INSERT INTO car(licenceplate)
+                                      VALUES(?) '''
+            reservering = (1, 2, '2018-01-17 13:00:00', '2018-01-17 14:00:00')
+            sql3 = ''' INSERT INTO reservation(car_id, parkingspot_id, begindate, enddate)
+                                                  VALUES(?,?,?,?) '''
             cur = connection.cursor()
             cur.execute(sql1, parkeerplaats)
             cur.execute(sql2, auto)
@@ -101,15 +99,14 @@ class DatabaseManager():
     def testSelect(self, connection):
         try:
             c = connection.cursor()
-            c.execute('SELECT reservation.id, licenceplate, name, date FROM car INNER JOIN reservation ON car.id = reservation.car_id INNER JOIN parkingspot ON parkingspot.id = reservation.parkingspot_id')
+            c.execute('SELECT reservation.rowid, licenceplate, name, date FROM car INNER JOIN reservation ON car.id = reservation.car_id INNER JOIN parkingspot ON parkingspot.id = reservation.parkingspot_id')
             print c.fetchall()
         except Error as e:
             print(e)
 
 
-#db = DatabaseManager()
-#db.testInsert(db.createConnection())
+db = DatabaseManager()
 #con = dm.createConnection()
 #dm.testInsert(con)
-#print dm.executeSQL(con, "select * from parkingspot")
+print db.executeSQL(db.createConnection(), "select *  from reservation")
 
