@@ -3,11 +3,12 @@ import httplib, urllib
 
 
 def Vehicle():
-    name = input("What parkingspot would you like to take? ")
-    data = input("What time and date would you like to park (YY-MM-DD,HH-MM")
-    duration = input("How long would you like to park (minutes)")
-    print("Making reservation for parkingspot " + str(name) + ", At date " + str(data) + "f r " + str(duration) + " minutes!")
-    POSTRequest(name, data, duration)
+    name = raw_input("What parkingspot would you like to take? ")
+    date = raw_input("What date would you like to park (YY-MM-DD HH:MM")
+    duration = raw_input("How long would you like to park (minutes)")
+    print("Making reservation for parkingspot " + str(name) + ", At date " + str(date) + "for " + str(duration) + " minutes!")
+    licensePlate = raw_input("what is your cars license plate?")
+    POSTRequest(name, date, duration, licensePlate)
 
 
 def GETRequest():
@@ -17,13 +18,14 @@ def GETRequest():
     res = conn.getresponse()
     print res.status, res.reason
 
-def POSTRequest(name, data, duration):
-    params = urllib.urlencode({'licenseplate': 12524, 'type': 'auto', 'parkingspot': 'A12', 'duration': '12H', 'starttime': '12:00:03'})
+def POSTRequest(name, date, duration, licensePlate):
+
+    params = urllib.urlencode({'licensePlate': str(licensePlate), 'type': 'auto', 'parkingspot': str(name), 'duration': str(duration), 'starttime': str(date)})
     headers = {"Content-type": "application/x-www-form-urlencoded"}
     conn = httplib.HTTPConnection("131.155.238.86", "8085")
     conn.request("POST", "", params, headers)
     response = conn.getresponse()
-    print("reservation for parkingspot " + str(name) + ", At date " + str(data) + " for " + str(duration) + " minutes succesfull!");
+    print("reservation for parkingspot " + str(name) + ", At date " + str(date) + " for " + str(duration) + " minutes succesfull!");
     print response.status, response.reason
     conn.close()
 
