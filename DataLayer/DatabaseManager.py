@@ -6,6 +6,9 @@ from ApplicationLayer.ConfigHandler import ConfigHandler
 
 
 class DatabaseManager():
+    configHandler = ConfigHandler()
+    #database = str(configHandler.pathvariable)
+    database = "C://Users//kszoo//OneDrive//Documenten//IoT-ParkingSystem//DataLayer//pythonsqlite.db"
 
     sql_create_parkingspot_table = """ CREATE TABLE IF NOT EXISTS parkingspot (
                                             id text PRIMARY KEY,
@@ -29,8 +32,6 @@ class DatabaseManager():
 
     def __init__(self):
 
-        configHandler = ConfigHandler()
-        self.database = configHandler.ConfigSectionMap("Database")['databasepath']
         connection = self.createConnection();
         if connection is not None:
             self.createTables(connection)
@@ -113,5 +114,5 @@ class DatabaseManager():
 #db = DatabaseManager()
 #con = dm.createConnection()
 #dm.testInsert(con)
-print db.executeSQL(db.createConnection(), "select *  from reservation")
+#print db.executeSQL(db.createConnection(), "select *  from reservation")
 

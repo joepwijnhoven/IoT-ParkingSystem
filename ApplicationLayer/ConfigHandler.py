@@ -16,4 +16,7 @@ class ConfigHandler():
                 dict1[option] = None
         return dict1
 
+    pathvariable = ConfigSectionMap("Database")['databasepath']
+
+
 
