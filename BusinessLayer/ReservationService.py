@@ -11,8 +11,9 @@ class ReservationService():
         carid = self.vs.getVehicle(licenceplate)
         if len(carid) == 0:
             carid = self.vs.createVehicle(licenceplate)
+        print carid
         begin = datetime.strptime(begindate, '%Y-%m-%d %H:%M')
-        end = begin + timedelta(minutes=duration)
+        end = begin + timedelta(minutes=int(duration))
         con = self.db.createConnection()
         self.db.insertRecord((carid[0][0], str(parkingspotId), str(begin), str(end)), "reservation", con)
         con.close()

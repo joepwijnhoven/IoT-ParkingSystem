@@ -10,6 +10,7 @@ from ApplicationLayer.TestResource import TestResource
 
 import txthings.resource as resource
 import txthings.coap as coap
+import socket
 
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
 

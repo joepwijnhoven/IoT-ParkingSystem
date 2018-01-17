@@ -10,6 +10,7 @@ from pprint import pprint
 
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BusinessLayer.ParkinspotStateService import ParkingspotStateService
+from BusinessLayer.ReservationService import ReservationService
 
 
 def getFunction():
@@ -18,16 +19,17 @@ def getFunction():
 def postFunction(postvars):
 
     pprint(postvars)
-    print
     date = postvars["starttime"].value
     duration = postvars["duration"].value
+    parkingspot = postvars["parkingspot"].value
+    licenseplate = postvars["licensePlate"].value
     print(date)
     print(duration)
 
-    ps = ParkingspotStateService()
-    parkingspots = ps.getFreeParkingSpots(date, duration)
+    ps = ReservationService()
+    ps.makeReservation(parkingspot, licenseplate, date, duration)
 
-    print(parkingspots[0][0])
+    #print(parkingspots[0][0])
 
     print "postFunction got called"
 
