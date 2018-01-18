@@ -17,6 +17,7 @@ from pprint import pprint
 
 from txthings import resource, coap
 
+from ApplicationLayer.NotifyResource import NotifyResource
 from ApplicationLayer.Server_Agent import Agent
 from BaseHTTPServer import BaseHTTPRequestHandler
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
@@ -124,6 +125,9 @@ well_known.putChild('core', core)
 
 parkingspotstate = ParkingspotStateResource()
 root.putChild('register', parkingspotstate)
+
+notify = NotifyResource()
+root.putChild('notify', notify)
 
 other = resource.CoAPResource()
 root.putChild('other', other)

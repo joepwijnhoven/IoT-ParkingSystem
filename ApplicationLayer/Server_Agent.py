@@ -28,7 +28,7 @@ class Agent():
         request = coap.Message(code=coap.PUT, payload=payload)
         request.opt.uri_path = uri
         request.opt.content_format = coap.media_types_rev['text/plain']
-        request.remote = (ip, 61616)
+        request.remote = (ip, coap.COAP_PORT)
         d = self.protocol.request(request)
         d.addCallback(self.printResponse)
 
