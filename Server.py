@@ -19,11 +19,9 @@ from txthings import resource, coap
 
 from ApplicationLayer.Server_Agent import Agent
 from BaseHTTPServer import BaseHTTPRequestHandler
-import BusinessLayer.ParkinspotStateService
-
-
 from ApplicationLayer.ParkingspotStateResource import ParkingspotStateResource
 from BusinessLayer.ReservationService import ReservationService
+from BusinessLayer.ParkinspotStateService import ParkingspotStateService
 
 from urlparse import urlparse, parse_qs
 
@@ -65,10 +63,13 @@ def postFunction(postvars):
     duration = postvars["duration"].value
     parkingspot = postvars["parkingspot"].value
     licenseplate = postvars["licensePlate"].value
-    client.putResource("192.168.1.11", "reserved", ("32700", "32801",))
-    client.putResource("192.168.1.11", "orange", ("3341", "5527",))
-    ps = ReservationService()
-    ps.makeReservation(parkingspot, licenseplate, date, duration)
+    ps = ParkingspotStateService()
+    ip = ps.getIPOfParkingSpot(parkingspot)
+    if ip is not None:
+        client.putResource(ip, "reserved", ("32700", "32801",))
+        client.putResource(ip, "orange", ("3341", "5527",))
+    rs = ReservationService()
+    rs.makeReservation(parkingspot, licenseplate, date, duration)
 
 class MyHandler(BaseHTTPRequestHandler):
 
@@ -95,21 +96,17 @@ class MyHandler(BaseHTTPRequestHandler):
         return form
 
     def do_GET(self):
-        reservation = ReservationService()
+        pss = ParkingspotStateService()
         getFunction()
-        print self.path
-
         query_components = parse_qs(urlparse(self.path).query)
         start = query_components["starttime"]
-        print start
         duration = query_components["duration"]
-        print duration
         print query_components
         #print self.request
         #qs = urlparse.parse_qs(urlparse.urlparse(self.request)[2])
-        parkingSpots = reservation.getFreeParkingSpots(start, duration)
+        parkingSpots = pss.getFreeParkingSpots(str(start[0]), duration[0])
 
-        self.send_response(200, message=query_components)
+        self.send_response(200, message=parkingSpots)
 
     def do_POST(self):
         postvars = self.parse_Post2()

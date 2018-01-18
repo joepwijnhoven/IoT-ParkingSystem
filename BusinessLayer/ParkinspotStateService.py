@@ -32,7 +32,7 @@ class ParkingspotStateService():
 
     def getFreeParkingSpots(self, date, duration):
         begin = datetime.strptime(date, '%Y-%m-%d %H:%M')
-        end = begin + timedelta(minutes=duration)
+        end = begin + timedelta(minutes=int(duration))
         con = self.db.createConnection()
 
         parkingspots = self.db.executeSQL(con,
@@ -41,6 +41,14 @@ class ParkingspotStateService():
         con.close()
         return parkingspots
 
+    def getIPOfParkingSpot(self, id):
+        con = self.db.createConnection()
+        ips = self.db.executeSQL(con, "select ip from parkingspot where id='" + str(id) + "'")
+        con.close()
+        if len(ips) == 0:
+            return None
+        else:
+            return ips[0][0]
 
 
 
